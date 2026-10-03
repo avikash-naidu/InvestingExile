@@ -1,0 +1,12 @@
+---
+description: docs/STATUS.md is the single source of truth and must be updated in every commit
+alwaysApply: true
+---
+
+# Project status
+
+`docs/STATUS.md` is the single source of truth for what this repo contains.
+
+Read it before editing. Update it in the same commit as every change. Do not commit when that update is missing. Do not add a second status file.
+
+Follow `.cursor/skills/project-status/SKILL.md`.
