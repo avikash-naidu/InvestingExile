@@ -4,15 +4,16 @@ This file is the single source of truth for what InvestingExile contains. Every 
 
 ## Now
 
-- `main` contains `backend/InvestingExile.sln`, a .NET 8 solution.
-- Projects in that solution: InvestingExile.Domain, InvestingExile.Pipeline, InvestingExile.Api, InvestingExile.Tests. They are the default templates.
-- Domain has no entities. Pipeline has no ingest command. Api has no item route. Tests check that the solution lists those four projects and no others.
-- Pull request #34 stays closed. `main` was fast-forwarded to the same commits.
+- `backend/InvestingExile.sln` is a .NET 8 solution.
+- Projects in that solution: InvestingExile.Domain, InvestingExile.Pipeline, InvestingExile.Api, InvestingExile.Tests.
+- `InvestingExile.Domain` is the class library under `backend/`. It holds temporary `League`, `Item`, and `PriceSnapshot` classes for the price tables. `AppDbContext` is not in the project yet.
+- Pipeline has no ingest command. Api has no item route. Tests check that the solution lists those four projects and no others, and that Domain is a class library with those temporary types and without `AppDbContext`.
+- Pull request #34 stays closed.
 
 ## Not built
 
-Postgres, price ingest, the item grid, scoring, patch notes, and hosting.
+`AppDbContext`, the EF Core migration, Postgres, price ingest, the item grid, scoring, patch notes, and hosting.
 
 ## Latest change
 
-2026-10-03: Fast-forwarded `main` to the .NET 8 solution, this status file, and the `project-status` skill. Pull request #34 stays closed.
+2026-10-04: Added temporary `League`, `Item`, and `PriceSnapshot` classes in `InvestingExile.Domain`. The EF model and migration remain for issue #4.
