@@ -11,9 +11,10 @@ description: >-
 
 ## Start
 
-1. Read `docs/STATUS.md`. If the user asked for a later slice than the one that file describes as current, stop and say which slice is next.
-2. Read [reference.md](reference.md) when the work is ingest, entities, or a named slice prompt.
-3. The task list is the GitHub Project **InvestingExile MVP**. Work only the open sub-issues of the current slice. Do not invent issues.
+1. Before the first edit, follow [issue-branch](../issue-branch/SKILL.md): create a branch that tracks the issue.
+2. Read `docs/STATUS.md`. If the user asked for a later slice than the one that file describes as current, stop and say which slice is next.
+3. Read [reference.md](reference.md) when the work is ingest, entities, or a named slice prompt.
+4. The task list is the GitHub Project **InvestingExile MVP**. Work only the open sub-issues of the current slice. Do not invent issues.
 
 ## Finish
 
