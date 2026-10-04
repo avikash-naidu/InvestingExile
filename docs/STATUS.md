@@ -13,6 +13,8 @@ This file is the single source of truth for what InvestingExile contains. Every 
 - Tests check that the solution lists those four projects and no others, that Domain is a class library with those temporary types and without `AppDbContext`, that Pipeline is that console app without a poe.ninja call, that Api is that web host without an item route, and that the xUnit project has no saved poe.ninja JSON fixture.
 - `.cursor/skills/issue-branch/` says to create a branch for the GitHub issue, set that InvestingExile MVP task to In Progress, and link the branch to the issue before the first edit.
 - `.cursor/rules/build-plan.mdc` is the MVP build plan and loads in every chat. `.cursor/skills/investing-exile/` holds the slice workflow and the poe.ninja notes.
+- `.cursor/rules/agent-skills.mdc` and `AGENTS.md` tell skills in `.agents/skills/` to read `docs/agents/cursor-skills.md` before they act. That file names `.cursor/skills/issue-branch/`, `.cursor/skills/investing-exile/`, and `.cursor/skills/project-status/`. Tracker, labels, and domain docs stay in `docs/agents/`.
+- `.gitignore` leaves `.agents/` and `skills-lock.json` untracked. Those are the installed Matt Pocock skill pack.
 - Pull request #34 stays closed.
 
 ## Not built
@@ -21,4 +23,4 @@ This file is the single source of truth for what InvestingExile contains. Every 
 
 ## Latest change
 
-2026-10-04: Locked `InvestingExile.Tests` as the xUnit project. The double-run fixture test stays on issue #6.
+2026-10-04: The Matt Pocock skill pack stays local. `.gitignore` excludes `.agents/` and `skills-lock.json`.
