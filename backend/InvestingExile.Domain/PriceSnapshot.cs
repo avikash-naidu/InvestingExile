@@ -1,11 +1,14 @@
 namespace InvestingExile.Domain;
 
-// Temporary stand-in until issue #4 adds the EF Core model.
 public class PriceSnapshot
 {
     public int LeagueId { get; set; }
 
+    public League League { get; set; } = null!;
+
     public int ItemId { get; set; }
+
+    public Item Item { get; set; } = null!;
 
     public DateTimeOffset HourBucket { get; set; }
 
