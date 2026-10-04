@@ -1,3 +1,7 @@
 bin/
 obj/
 .vs/
+
+# Installed agent skill packs. Reinstall with npx skills add.
+.agents/
+skills-lock.json

@@ -9,6 +9,8 @@ description: >-
 
 # Issue branch
 
+GitHub issue operations live in `docs/agents/issue-tracker.md`. This skill is the start-of-work procedure: branch, project Status, and the link between them.
+
 Before starting on any new issue, create a new branch to track that issue. Do this before the first edit.
 
 ## Before editing
