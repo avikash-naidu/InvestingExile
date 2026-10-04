@@ -1,0 +1,59 @@
+---
+description: InvestingExile MVP build plan — product, slice order, stack, data rules, and scope
+alwaysApply: true
+---
+
+# Build plan
+
+League-start investment tracker: which Path of Exile items are worth buying at league start, and why, from poe.ninja prices and later patch notes.
+
+Read `docs/STATUS.md` before editing. The GitHub Project **InvestingExile MVP** is the task list. Work the open issue for the current slice. Do not start the next slice in the same chat.
+
+## Order
+
+A1 prices in Postgres, then A2 item grid, then B tested score, then C patch notes, then D smallest host.
+
+D hosts this same app. It does not add EKS, Redis, or Cognito.
+
+## Stack
+
+.NET 8, EF Core, PostgreSQL 16, React, TypeScript, Vite, xUnit.
+
+Local database: docker compose, service `postgres:16`, database `investingexile`.
+
+## Layout
+
+- `backend/InvestingExile.sln`
+- `backend/InvestingExile.Domain` — entities and `AppDbContext`
+- `backend/InvestingExile.Pipeline` — poe.ninja ingest and, later, scoring and patch jobs
+- `backend/InvestingExile.Api` — HTTP read API
+- `backend/InvestingExile.Tests` — xUnit
+- `frontend/` — Vite React grid
+
+## Slices
+
+- **A1:** Postgres 16 database `investingexile`; `League`, `Item`, `PriceSnapshot` and one migration; price ingest; double-run test against a saved poe.ninja fixture.
+- **A2:** `GET /items` for the latest snapshot; Vite React grid of icon, name, chaos, divine, and sparkline.
+- **B:** `docs/SCORING.md` and that formula only; two-league fixtures assert direction and magnitude; a one-league item has no score and still renders.
+- **C:** Separate patch-note command; `PatchChange` references an item or a mechanic; `ItemMechanic` flags; shared-secret override writes `AuditLog` in the same transaction; `GET /items` applies the override and leaves `InvestmentScore` unchanged.
+- **D:** Dockerfiles for the API and the pipeline; built frontend as static files; compose runs Postgres, the API, and a one-shot pipeline; README names one small host; GitHub Actions runs tests and builds the images.
+
+## Data rules
+
+- Item identity is category + name + variant. Store poe.ninja `detailsId`; do not use it as the key.
+- `PriceSnapshot` unique key is league + item + UTC hour bucket. Not the raw timestamp.
+- Store chaos value, divine value, and listing count. A divine price move must not look like an item move.
+- `InvestmentScore` is derived. Never update it to apply a correction.
+- Price ingest and patch-note ingest are separate commands. Do not chain them.
+
+## Scope
+
+The running shape is one API process, one pipeline process, one Postgres database, and one React app.
+
+Do not add, even as a stub: Redis, ElastiCache, Cognito, JWT auth frameworks, EKS, Terraform, Kubernetes, ALB, IRSA, ECR, Watchlist, user accounts, or an LLM client.
+
+Admin protection, when a slice asks for it, is a single shared secret checked on the server. A client-side route guard is not enough.
+
+One EF Core migration per slice. Do not generate migrations for tables that slice does not use.
+
+When implementing ingest, entities, or a named slice, follow `.cursor/skills/investing-exile/SKILL.md` and read `.cursor/skills/investing-exile/reference.md`.
