@@ -5,3 +5,11 @@ obj/
 # Installed agent skill packs. Reinstall with npx skills add.
 .agents/
 skills-lock.json
+
+# Local teaching workspace. Not part of the app.
+/lessons/
+/reference/
+/assets/
+/MISSION.md
+/RESOURCES.md
+/NOTES.md

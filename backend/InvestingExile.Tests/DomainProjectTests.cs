@@ -3,7 +3,7 @@ namespace InvestingExile.Tests;
 public class DomainProjectTests
 {
     [Fact]
-    public void Domain_is_a_class_library_with_temporary_price_types()
+    public void Domain_is_a_class_library_with_the_price_model()
     {
         var projectPath = FindDomainProject();
         var text = File.ReadAllText(projectPath);
@@ -24,7 +24,7 @@ public class DomainProjectTests
         Assert.Contains("class League", combined);
         Assert.Contains("class Item", combined);
         Assert.Contains("class PriceSnapshot", combined);
-        Assert.DoesNotContain("class AppDbContext", combined);
+        Assert.Contains("class AppDbContext", combined);
     }
 
     private static string FindDomainProject()

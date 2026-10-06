@@ -20,4 +20,8 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\InvestingExile.Domain\InvestingExile.Domain.csproj" />
+  </ItemGroup>
+
 </Project>

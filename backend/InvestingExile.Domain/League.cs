@@ -1,7 +1,10 @@
 namespace InvestingExile.Domain;
 
-// Temporary stand-in until issue #4 adds the EF Core model.
 public class League
 {
+    public int Id { get; set; }
+
     public string Name { get; set; } = "";
+
+    public List<PriceSnapshot> PriceSnapshots { get; set; } = [];
 }

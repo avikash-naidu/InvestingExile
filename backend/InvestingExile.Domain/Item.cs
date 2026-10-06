@@ -1,8 +1,9 @@
 namespace InvestingExile.Domain;
 
-// Temporary stand-in until issue #4 adds the EF Core model.
 public class Item
 {
+    public int Id { get; set; }
+
     public string Category { get; set; } = "";
 
     public string Name { get; set; } = "";
@@ -10,4 +11,6 @@ public class Item
     public string Variant { get; set; } = "";
 
     public string DetailsId { get; set; } = "";
+
+    public List<PriceSnapshot> PriceSnapshots { get; set; } = [];
 }
