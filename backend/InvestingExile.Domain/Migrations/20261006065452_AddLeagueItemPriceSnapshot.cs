@@ -49,7 +49,7 @@ namespace InvestingExile.Domain.Migrations
                     ItemId = table.Column<int>(type: "integer", nullable: false),
                     HourBucket = table.Column<DateTimeOffset>(type: "timestamp with time zone", nullable: false),
                     ChaosValue = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: false),
-                    DivineValue = table.Column<decimal>(type: "numeric(18,4)", precision: 18, scale: 4, nullable: true),
+                    DivineValue = table.Column<decimal>(type: "numeric(18,8)", precision: 18, scale: 8, nullable: true),
                     ListingCount = table.Column<int>(type: "integer", nullable: true)
                 },
                 constraints: table =>

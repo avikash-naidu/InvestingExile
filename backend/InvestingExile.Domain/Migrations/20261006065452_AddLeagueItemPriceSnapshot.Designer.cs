@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InvestingExile.Domain.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20261004093007_AddLeagueItemPriceSnapshot")]
+    [Migration("20261006065452_AddLeagueItemPriceSnapshot")]
     partial class AddLeagueItemPriceSnapshot
     {
         /// <inheritdoc />
@@ -93,8 +93,8 @@ namespace InvestingExile.Domain.Migrations
                         .HasColumnType("numeric(18,4)");
 
                     b.Property<decimal?>("DivineValue")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("numeric(18,4)");
+                        .HasPrecision(18, 8)
+                        .HasColumnType("numeric(18,8)");
 
                     b.Property<int?>("ListingCount")
                         .HasColumnType("integer");

@@ -41,7 +41,7 @@ public class AppDbContext : DbContext
                 "CK_PriceSnapshots_HourBucket",
                 "\"HourBucket\" = (date_trunc('hour', \"HourBucket\" AT TIME ZONE 'UTC') AT TIME ZONE 'UTC')"));
             entity.Property(snapshot => snapshot.ChaosValue).HasPrecision(18, 4);
-            entity.Property(snapshot => snapshot.DivineValue).HasPrecision(18, 4);
+            entity.Property(snapshot => snapshot.DivineValue).HasPrecision(18, 8);
             entity.HasOne(snapshot => snapshot.League)
                 .WithMany(league => league.PriceSnapshots)
                 .HasForeignKey(snapshot => snapshot.LeagueId);

@@ -90,8 +90,8 @@ namespace InvestingExile.Domain.Migrations
                         .HasColumnType("numeric(18,4)");
 
                     b.Property<decimal?>("DivineValue")
-                        .HasPrecision(18, 4)
-                        .HasColumnType("numeric(18,4)");
+                        .HasPrecision(18, 8)
+                        .HasColumnType("numeric(18,8)");
 
                     b.Property<int?>("ListingCount")
                         .HasColumnType("integer");

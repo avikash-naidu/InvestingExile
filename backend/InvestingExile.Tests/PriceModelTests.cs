@@ -51,6 +51,8 @@ public class PriceModelTests
         Assert.False(snapshot.FindProperty(nameof(PriceSnapshot.ChaosValue))!.IsNullable);
         Assert.True(snapshot.FindProperty(nameof(PriceSnapshot.DivineValue))!.IsNullable);
         Assert.True(snapshot.FindProperty(nameof(PriceSnapshot.ListingCount))!.IsNullable);
+        Assert.Equal(4, snapshot.FindProperty(nameof(PriceSnapshot.ChaosValue))!.GetScale());
+        Assert.Equal(8, snapshot.FindProperty(nameof(PriceSnapshot.DivineValue))!.GetScale());
     }
 
     [Fact]
@@ -85,7 +87,9 @@ public class PriceModelTests
             [nameof(PriceSnapshot.LeagueId), nameof(PriceSnapshot.ItemId), nameof(PriceSnapshot.HourBucket)],
             snapshots.PrimaryKey!.Columns);
         Assert.Contains(snapshots.Columns, column => column.Name == nameof(PriceSnapshot.ChaosValue));
-        Assert.Contains(snapshots.Columns, column => column.Name == nameof(PriceSnapshot.DivineValue));
+        Assert.Contains(
+            snapshots.Columns,
+            column => column.Name == nameof(PriceSnapshot.DivineValue) && column.ColumnType == "numeric(18,8)");
         Assert.Contains(snapshots.Columns, column => column.Name == nameof(PriceSnapshot.ListingCount));
         Assert.Contains(
             snapshots.CheckConstraints,
