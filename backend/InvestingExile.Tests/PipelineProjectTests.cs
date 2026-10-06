@@ -3,7 +3,7 @@ namespace InvestingExile.Tests;
 public class PipelineProjectTests
 {
     [Fact]
-    public void Pipeline_is_a_console_app_without_the_ingest_command()
+    public void Pipeline_is_a_console_app_with_the_ingest_command()
     {
         var projectPath = FindPipelineProject();
         var text = File.ReadAllText(projectPath);
@@ -23,9 +23,12 @@ public class PipelineProjectTests
 
         var combined = string.Join('\n', sources);
         Assert.Contains("class Program", combined);
-        Assert.DoesNotContain("poe.ninja", combined, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("HttpClient", combined);
-        Assert.DoesNotContain("--league", combined);
+        Assert.Contains("poe.ninja", combined, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("HttpClient", combined);
+        Assert.Contains("--league", combined);
+
+        // The ingest command and patch-note ingest stay separate.
+        Assert.DoesNotContain("PatchChange", combined);
     }
 
     private static string FindPipelineProject()
