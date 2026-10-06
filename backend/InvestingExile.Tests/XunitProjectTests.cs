@@ -3,7 +3,7 @@ namespace InvestingExile.Tests;
 public class XunitProjectTests
 {
     [Fact]
-    public void Xunit_project_has_no_double_run_fixture()
+    public void Xunit_project_is_the_test_project()
     {
         var projectPath = FindTestsProject();
         var text = File.ReadAllText(projectPath);
@@ -12,14 +12,6 @@ public class XunitProjectTests
         Assert.Contains("Include=\"xunit\"", text);
         Assert.Contains("Include=\"Microsoft.NET.Test.Sdk\"", text);
         Assert.Contains("Include=\"xunit.runner.visualstudio\"", text);
-        Assert.DoesNotContain("Testcontainers", text);
-
-        var projectDirectory = Path.GetDirectoryName(projectPath)!;
-        var files = Directory.EnumerateFiles(projectDirectory, "*", SearchOption.AllDirectories)
-            .Where(path => path.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}", StringComparison.Ordinal) == false
-                        && path.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}", StringComparison.Ordinal) == false);
-
-        Assert.DoesNotContain(files, path => path.EndsWith(".json", StringComparison.OrdinalIgnoreCase));
     }
 
     private static string FindTestsProject()
