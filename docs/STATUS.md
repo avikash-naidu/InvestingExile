@@ -15,7 +15,7 @@ This file is the single source of truth for what InvestingExile contains. Every 
 - `.cursor/skills/issue-branch/` says to create a branch for the GitHub issue, set that InvestingExile MVP task to In Progress, and link the branch to the issue before the first edit.
 - `.cursor/rules/build-plan.mdc` is the MVP build plan and loads in every chat. `.cursor/skills/investing-exile/` holds the slice workflow and the poe.ninja notes.
 - `.cursor/rules/agent-skills.mdc` and `AGENTS.md` tell skills in `.agents/skills/` to read `docs/agents/cursor-skills.md` before they act. That file names `.cursor/skills/issue-branch/`, `.cursor/skills/investing-exile/`, and `.cursor/skills/project-status/`. Tracker, labels, and domain docs stay in `docs/agents/`.
-- `.gitignore` leaves `.agents/` and `skills-lock.json` untracked. Those are the installed Matt Pocock skill pack.
+- `.gitignore` leaves `.agents/` and `skills-lock.json` untracked. Those are the installed Matt Pocock skill pack. It also leaves the local teaching files untracked: `lessons/`, `reference/`, `assets/`, `MISSION.md`, `RESOURCES.md`, and `NOTES.md`.
 - Pull request #34 stays closed.
 
 ## Not built
@@ -24,4 +24,4 @@ Price ingest, the item grid, scoring, patch notes, and hosting. The compose file
 
 ## Latest change
 
-2026-10-04: `League`, `Item`, and `PriceSnapshot` are the EF Core price model, with one migration for those tables.
+2026-10-06: `.gitignore` leaves the local teaching files untracked, including `lessons/`.
