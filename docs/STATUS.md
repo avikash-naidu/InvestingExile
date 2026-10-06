@@ -16,6 +16,7 @@ This file is the single source of truth for what InvestingExile contains. Every 
 - `.cursor/rules/build-plan.mdc` is the MVP build plan and loads in every chat. `.cursor/skills/investing-exile/` holds the slice workflow and the poe.ninja notes.
 - `.cursor/rules/agent-skills.mdc` and `AGENTS.md` tell skills in `.agents/skills/` to read `docs/agents/cursor-skills.md` before they act. That file names `.cursor/skills/issue-branch/`, `.cursor/skills/investing-exile/`, and `.cursor/skills/project-status/`. Tracker, labels, and domain docs stay in `docs/agents/`.
 - `.gitignore` leaves `.agents/` and `skills-lock.json` untracked. Those are the installed Matt Pocock skill pack.
+- `.github/pull_request_template.md` pre-fills every new pull request with Summary, Testing, and Risks and rollback, plus a `Closes #` line.
 - Pull request #34 stays closed.
 
 ## Not built
@@ -24,4 +25,4 @@ This file is the single source of truth for what InvestingExile contains. Every 
 
 ## Latest change
 
-2026-10-04: `docker-compose.yml` starts Postgres 16 with database `investingexile` so later price ingest has a local database.
+2026-10-06: `.github/pull_request_template.md` gives pull requests the Summary, Testing, and Risks and rollback sections.
