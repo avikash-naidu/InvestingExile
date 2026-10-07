@@ -4,14 +4,19 @@ Read this when implementing ingest, entities, or a named slice. The build plan r
 
 ## poe.ninja
 
-- Currency overview: `https://poe.ninja/api/data/currencyoverview?league={league}&type=Currency`
-- Item overview: `https://poe.ninja/api/data/itemoverview?league={league}&type={type}`
-- No API key. League is a CLI argument. Do not hardcode a league name.
-- Currency row: `currencyTypeName`, `chaosEquivalent`, `receiveSparkLine` / `paySparkLine` (`data`, `totalChange`), `detailsId`. Listing count may be on the pay or receive side (`count`).
-- Item row: `name`, `baseType`, `variant`, `chaosValue`, `divineValue`, `listingCount`, `sparkline.data`, `icon`, `detailsId`.
-- Slice A categories: `Currency`, `Scarab`, `Fragment`. Stop there.
+poe.ninja migrated its economy API in 2026. The old `poe.ninja/api/data/currencyoverview` and `itemoverview` endpoints are gone (they 404). Use the current economy endpoints below.
+
+- Active leagues: `https://poe.ninja/poe1/api/economy/leagues`. Returns only currently-active leagues as `{ id, name, ... }`. The `id` is the value you pass as `league`; it is the same string as the human league name (for example `Mirage`).
+- Currency exchange overview: `https://poe.ninja/poe1/api/economy/exchange/current/overview?league={id}&type={type}`. This one endpoint serves every currency-exchange `type` with one uniform shape, so the ingest uses it for all types (not the `stash/current/...` paths, where Scarab and Fragment come back empty).
+- No API key. League is a CLI argument passed straight through as `league`. Do not hardcode a league name. Set a descriptive `User-Agent` (for example `InvestingExile/1.0`); poe.ninja blocks a generic or empty one.
+- **Active leagues only.** The live API serves the current league. Querying an ended league returns 404 or empty. Past-league history is only available as poe.ninja's downloadable CSV data dumps (`poe.ninja/poe1/data`); importing those is a separate, later command, not the price ingest command.
+- **All exchange types.** Ingest every currency-exchange `type`. There is no types endpoint, so the list is mirrored from poe.ninja's API docs and needs a bump when a patch adds or retires a mechanic type. The PoE1 exchange types are: `Currency`, `Fragment`, `Runegraft`, `AllflameEmber`, `Tattoo`, `Omen`, `DjinnCoin`, `Ducat`, `EnshroudingCrystal`, `DivinationCard`, `Artifact`, `Oil`, `DeliriumOrb`, `Scarab`, `Astrolabe`, `Fossil`, `Resonator`, `Essence`. The exchange returns HTTP 200 with an empty `lines` for a type a league does not have, which is fine. Gear, uniques, gems, and maps are a different, individually-priced endpoint and stay out of scope.
+- Exchange response: `core`, `lines[]`, `items[]`.
+  - `core.primary` is `chaos` and `core.rates.divine` is divine-per-chaos. `core.items[]` defines Chaos Orb and Divine Orb (id `chaos`, `divine`); they are not in any type's `lines`, so seed them once: Chaos Orb chaos 1, Divine Orb chaos `1 / rates.divine`.
+  - Each `lines[]` entry has `id`, `primaryValue` (price in chaos), `volumePrimaryValue` (trade volume, not a listing count), and `sparkline`.
+  - Join `line.id` to `items[]` for `name`, `detailsId`, and `category`. Use poe.ninja's `category` as the item category (for example Scarabs come back under `Fragments`, catalysts under `Catalysts`); fall back to the queried type.
+- `ChaosValue = primaryValue`. `DivineValue = primaryValue * rates.divine` (null if no rate). `ListingCount` stays null: the exchange gives volume, not a listing count; slice B decides the liquidity signal.
 - Sparkline points from the payload are what the first grid draws. Repeated hourly snapshots are the long-term series.
-- Chaos Orb's chaos value is 1. Divine's chaos value is `chaosEquivalent`.
 - Hour bucket: truncate snapshot time to the UTC hour. Upsert the same league, item, and hour in place.
 - Patch notes are HTML from the official site, stored raw, parsed only against a committed fixture. Not part of the price command.
 
@@ -29,7 +34,7 @@ Entities this session: League, Item, PriceSnapshot. One migration.
 
 Ingest command: `dotnet run --project InvestingExile.Pipeline -- --league "<name>"`
 
-Fetch poe.ninja currency overview plus Scarab and Fragment. Upsert items by category + name + variant. Write a PriceSnapshot for the current UTC hour. Running it twice in the same hour updates that snapshot and does not insert a second item or a second snapshot row.
+Fetch poe.ninja prices for every currency-exchange type (see the poe.ninja section above). Upsert items by category + name + variant. Write a PriceSnapshot for the current UTC hour. Running it twice in the same hour updates that snapshot and does not insert a second item or a second snapshot row.
 
 Done when: InvestingExile.Tests proves the double-run rule against the compose database (or Testcontainers if compose is awkward in CI), using a saved poe.ninja JSON fixture for the HTTP body. A manual run against a real league name passed in also persists rows.
 
