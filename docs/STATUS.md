@@ -16,6 +16,7 @@ This file is the single source of truth for what InvestingExile contains. Every 
 - `.cursor/rules/build-plan.mdc` is the MVP build plan and loads in every chat. `.cursor/skills/investing-exile/` holds the slice workflow and the poe.ninja notes.
 - `.cursor/rules/agent-skills.mdc` and `AGENTS.md` tell skills in `.agents/skills/` to read `docs/agents/cursor-skills.md` before they act. That file names `.cursor/skills/issue-branch/`, `.cursor/skills/investing-exile/`, and `.cursor/skills/project-status/`. Tracker, labels, and domain docs stay in `docs/agents/`.
 - `.gitignore` leaves `.agents/` and `skills-lock.json` untracked. Those are the installed Matt Pocock skill pack. It also leaves the local teaching files untracked: `lessons/`, `reference/`, `assets/`, `MISSION.md`, `RESOURCES.md`, and `NOTES.md`.
+- `README.md` is the visitor page. Its Plan section is the initial slice order A1, A2, B, C, then D, and what each slice is for. Its Completed section records A1: prices in Postgres, the ingest command, and the double-run test. The plan is left in place for later slices. `docs/STATUS.md` stays the agent record.
 - Pull request #34 stays closed.
 
 ## Not built
@@ -24,4 +25,4 @@ Slice A1 is done. Next is slice A2, parent issue #7 (item grid). Historical back
 
 ## Latest change
 
-2026-10-07: Issue #6's done-when passed: InvestingExile.Tests proves the double-run rule against Testcontainers Postgres 16, using a saved poe.ninja JSON fixture for the HTTP body. `PriceIngestMappingTests` adds the divine-rate, orb-seeding, and failed-fetch cases against `Fixtures/exchange-currency-core.json`. Next slice is A2, parent issue #7.
+2026-10-07: Issue #48's done-when passed: a reader of README.md can see the full plan and what A1 finished, without opening docs/STATUS.md. Next slice is A2, parent issue #7.
