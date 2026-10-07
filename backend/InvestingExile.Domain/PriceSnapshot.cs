@@ -17,4 +17,8 @@ public class PriceSnapshot
     public decimal? DivineValue { get; set; }
 
     public int? ListingCount { get; set; }
+
+    public string? Icon { get; set; }
+
+    public decimal?[] Sparkline { get; set; } = [];
 }
