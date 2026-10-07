@@ -130,6 +130,8 @@ public sealed class PriceIngestService
 
             snapshot.ChaosValue = row.ChaosValue;
             snapshot.DivineValue = row.DivineValue;
+            snapshot.Icon = row.Icon;
+            snapshot.Sparkline = row.Sparkline;
 
             // The exchange exposes trade volume, not a listing count. Left null
             // for A1; the liquidity signal is revisited in slice B (rec a).
@@ -164,11 +166,11 @@ public sealed class PriceIngestService
             {
                 if (coreItem.Id == "chaos")
                 {
-                    rows.Add(MakeRow(coreItem, type, chaosValue: 1m, divineRate));
+                    rows.Add(MakeRow(coreItem, type, chaosValue: 1m, divineRate, sparkline: null));
                 }
                 else if (coreItem.Id == "divine" && divineRate is > 0m)
                 {
-                    rows.Add(MakeRow(coreItem, type, chaosValue: 1m / divineRate.Value, divineRate));
+                    rows.Add(MakeRow(coreItem, type, chaosValue: 1m / divineRate.Value, divineRate, sparkline: null));
                 }
             }
 
@@ -183,11 +185,17 @@ public sealed class PriceIngestService
             }
 
             metaById.TryGetValue(line.Id, out var meta);
-            rows.Add(MakeRow(meta, type, line.PrimaryValue, divineRate, fallbackId: line.Id));
+            rows.Add(MakeRow(meta, type, line.PrimaryValue, divineRate, line.Sparkline?.Data, fallbackId: line.Id));
         }
     }
 
-    private static IngestRow MakeRow(ItemMeta? meta, string type, decimal chaosValue, decimal? divineRate, string? fallbackId = null)
+    private static IngestRow MakeRow(
+        ItemMeta? meta,
+        string type,
+        decimal chaosValue,
+        decimal? divineRate,
+        IReadOnlyList<decimal>? sparkline,
+        string? fallbackId = null)
     {
         var id = meta?.Id ?? fallbackId ?? "";
         return new IngestRow(
@@ -197,8 +205,10 @@ public sealed class PriceIngestService
             Name: string.IsNullOrEmpty(meta?.Name) ? id : meta!.Name!,
             Variant: "",
             DetailsId: string.IsNullOrEmpty(meta?.DetailsId) ? id : meta!.DetailsId!,
+            Icon: string.IsNullOrEmpty(meta?.Image) ? null : meta!.Image,
             ChaosValue: chaosValue,
-            DivineValue: divineRate is > 0m ? chaosValue * divineRate.Value : null);
+            DivineValue: divineRate is > 0m ? chaosValue * divineRate.Value : null,
+            Sparkline: sparkline is null ? [] : sparkline.ToArray());
     }
 
     private static DateTimeOffset TruncateToUtcHour(DateTimeOffset instant)
@@ -212,8 +222,10 @@ public sealed class PriceIngestService
         string Name,
         string Variant,
         string DetailsId,
+        string? Icon,
         decimal ChaosValue,
-        decimal? DivineValue);
+        decimal? DivineValue,
+        decimal[] Sparkline);
 
     private sealed class ExchangeOverview
     {
@@ -245,6 +257,13 @@ public sealed class PriceIngestService
         public string? Id { get; set; }
 
         public decimal PrimaryValue { get; set; }
+
+        public SparklineBody? Sparkline { get; set; }
+    }
+
+    private sealed class SparklineBody
+    {
+        public List<decimal>? Data { get; set; }
     }
 
     private sealed class ItemMeta
@@ -256,5 +275,7 @@ public sealed class PriceIngestService
         public string? DetailsId { get; set; }
 
         public string? Category { get; set; }
+
+        public string? Image { get; set; }
     }
 }

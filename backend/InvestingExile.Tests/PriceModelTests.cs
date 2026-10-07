@@ -62,7 +62,9 @@ public class PriceModelTests
             .GetTypes()
             .Where(type => type.IsSubclassOf(typeof(Migration)) && type.IsAbstract == false)
             .ToArray();
-        var migrationType = Assert.Single(migrationTypes);
+        var migrationType = Assert.Single(
+            migrationTypes,
+            type => type.Name.Contains("AddLeagueItemPriceSnapshot", StringComparison.Ordinal));
         var migration = (Migration)Activator.CreateInstance(migrationType)!;
         var builder = new MigrationBuilder("Npgsql.EntityFrameworkCore.PostgreSQL");
         typeof(Migration)

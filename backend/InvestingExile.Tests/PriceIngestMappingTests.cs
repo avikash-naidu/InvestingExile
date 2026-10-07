@@ -55,6 +55,40 @@ public class PriceIngestMappingTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Exchange_line_stores_the_icon_and_sparkline_points()
+    {
+        await ResetAsync();
+        const string body = """
+            {
+              "lines": [
+                {
+                  "id": "exalted",
+                  "primaryValue": 10,
+                  "sparkline": { "totalChange": -1.5, "data": [1.0, 2.5, -1.5] }
+                }
+              ],
+              "items": [
+                {
+                  "id": "exalted",
+                  "name": "Exalted Orb",
+                  "detailsId": "exalted-orb",
+                  "category": "Currency",
+                  "image": "/gen/image/exalted.png"
+                }
+              ]
+            }
+            """;
+        var client = new BodyPoeNinjaClient(body, everyType: false);
+
+        await IngestAsync(client);
+
+        await using var db = CreateContext();
+        var exalted = await SnapshotForAsync(db, "Exalted Orb");
+        Assert.Equal("/gen/image/exalted.png", exalted.Icon);
+        Assert.Equal([1.0m, 2.5m, -1.5m], exalted.Sparkline);
+    }
+
+    [Fact]
     public async Task A_failed_fetch_writes_nothing()
     {
         await ResetAsync();

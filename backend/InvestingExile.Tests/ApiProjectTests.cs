@@ -3,7 +3,7 @@ namespace InvestingExile.Tests;
 public class ApiProjectTests
 {
     [Fact]
-    public void Api_is_the_http_read_host_without_an_item_route()
+    public void Api_is_the_http_read_host()
     {
         var projectPath = FindApiProject();
         var text = File.ReadAllText(projectPath);
@@ -21,9 +21,8 @@ public class ApiProjectTests
 
         var combined = string.Join('\n', sources);
         Assert.Contains("WebApplication", combined);
+        Assert.Contains("MapGet(\"/items\"", combined);
         Assert.DoesNotContain("weatherforecast", combined, StringComparison.OrdinalIgnoreCase);
-        Assert.DoesNotContain("MapGet", combined);
-        Assert.DoesNotContain("/items", combined, StringComparison.OrdinalIgnoreCase);
     }
 
     private static string FindApiProject()
