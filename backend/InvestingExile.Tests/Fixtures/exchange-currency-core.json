@@ -1,0 +1,37 @@
+{
+  "core": {
+    "primary": "chaos",
+    "secondary": "divine",
+    "rates": {
+      "divine": 0.004
+    },
+    "items": [
+      {
+        "id": "chaos",
+        "name": "Chaos Orb",
+        "detailsId": "chaos-orb",
+        "category": "Currency"
+      },
+      {
+        "id": "divine",
+        "name": "Divine Orb",
+        "detailsId": "divine-orb",
+        "category": "Currency"
+      }
+    ]
+  },
+  "lines": [
+    {
+      "id": "exalted",
+      "primaryValue": 10
+    }
+  ],
+  "items": [
+    {
+      "id": "exalted",
+      "name": "Exalted Orb",
+      "detailsId": "exalted-orb",
+      "category": "Currency"
+    }
+  ]
+}
