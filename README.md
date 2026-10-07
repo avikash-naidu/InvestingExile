@@ -1,6 +1,10 @@
 # InvestingExile
 
-League-start investment tracker: which Path of Exile items are worth buying at league start, and why, from poe.ninja prices and later patch notes.
+## What this is
+
+InvestingExile is a league-start investment tracker for Path of Exile. In the first hours of a new league, currency, fragments, and other exchange items move as players learn the economy. This project keeps those prices from poe.ninja, then uses earlier leagues and later patch notes to show which items are worth buying and why.
+
+You use it to decide what to buy at league start: see an item's chaos price and divine price, how that price moved in previous leagues, and whether a patch changed the item or a mechanic it depends on.
 
 This page is what a visitor reads. Agents keep the running record in [docs/STATUS.md](docs/STATUS.md).
 
