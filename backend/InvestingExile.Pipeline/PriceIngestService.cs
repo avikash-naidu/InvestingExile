@@ -194,7 +194,7 @@ public sealed class PriceIngestService
         string type,
         decimal chaosValue,
         decimal? divineRate,
-        IReadOnlyList<decimal>? sparkline,
+        IReadOnlyList<decimal?>? sparkline,
         string? fallbackId = null)
     {
         var id = meta?.Id ?? fallbackId ?? "";
@@ -225,7 +225,7 @@ public sealed class PriceIngestService
         string? Icon,
         decimal ChaosValue,
         decimal? DivineValue,
-        decimal[] Sparkline);
+        decimal?[] Sparkline);
 
     private sealed class ExchangeOverview
     {
@@ -263,7 +263,7 @@ public sealed class PriceIngestService
 
     private sealed class SparklineBody
     {
-        public List<decimal>? Data { get; set; }
+        public List<decimal?>? Data { get; set; }
     }
 
     private sealed class ItemMeta

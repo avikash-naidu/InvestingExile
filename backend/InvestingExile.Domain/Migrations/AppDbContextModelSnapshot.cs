@@ -99,7 +99,7 @@ namespace InvestingExile.Domain.Migrations
                     b.Property<int?>("ListingCount")
                         .HasColumnType("integer");
 
-                    b.Property<decimal[]>("Sparkline")
+                    b.Property<decimal?[]>("Sparkline")
                         .IsRequired()
                         .HasColumnType("numeric[]");
 

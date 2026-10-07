@@ -20,5 +20,5 @@ public class PriceSnapshot
 
     public string? Icon { get; set; }
 
-    public decimal[] Sparkline { get; set; } = [];
+    public decimal?[] Sparkline { get; set; } = [];
 }

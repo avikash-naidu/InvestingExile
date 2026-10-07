@@ -42,5 +42,5 @@ public sealed record ItemSnapshot(
     decimal ChaosValue,
     decimal? DivineValue,
     int? ListingCount,
-    decimal[] Sparkline,
+    decimal?[] Sparkline,
     DateTimeOffset SnapshotHour);
