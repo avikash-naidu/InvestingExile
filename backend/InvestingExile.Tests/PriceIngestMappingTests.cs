@@ -31,6 +31,53 @@ public class PriceIngestMappingTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task Ingest_applies_migrations_after_the_schema_is_dropped()
+    {
+        await using (var db = CreateContext())
+        {
+            await db.Database.ExecuteSqlRawAsync(
+                """DROP SCHEMA public CASCADE; CREATE SCHEMA public;""");
+        }
+
+        var body = File.ReadAllText(FindFixture());
+        await using (var db = CreateUnmigratedContext())
+        {
+            var service = new PriceIngestService(db, new BodyPoeNinjaClient(body, everyType: false));
+            await service.IngestAsync(LeagueName);
+
+            var exalted = await SnapshotForAsync(db, "Exalted Orb");
+            Assert.Equal(10m, exalted.ChaosValue);
+            Assert.Equal(0.04m, exalted.DivineValue);
+        }
+    }
+
+    [Fact]
+    public async Task Chaos_and_divine_orbs_are_seeded_from_a_later_core_when_the_first_omits_them()
+    {
+        await ResetAsync();
+        var body = File.ReadAllText(FindFixture()).Replace("\"category\": \"Currency\"", "\"category\": \"\"", StringComparison.Ordinal);
+        var client = new LaterCorePoeNinjaClient(body);
+
+        await IngestAsync(client);
+
+        await using var db = CreateContext();
+        var chaosItem = Assert.Single(await db.Items.Where(item => item.Name == "Chaos Orb").ToListAsync());
+        Assert.Equal("Currency", chaosItem.Category);
+        var chaos = Assert.Single(await db.PriceSnapshots.Where(snapshot => snapshot.ItemId == chaosItem.Id).ToListAsync());
+        Assert.Equal(1m, chaos.ChaosValue);
+        Assert.Equal(0.004m, chaos.DivineValue);
+
+        var divineItem = Assert.Single(await db.Items.Where(item => item.Name == "Divine Orb").ToListAsync());
+        Assert.Equal("Currency", divineItem.Category);
+        var divine = Assert.Single(await db.PriceSnapshots.Where(snapshot => snapshot.ItemId == divineItem.Id).ToListAsync());
+        Assert.Equal(250m, divine.ChaosValue);
+        Assert.Equal(1m, divine.DivineValue);
+
+        Assert.Equal(1, await db.Items.CountAsync(item => item.Name == "Chaos Orb"));
+        Assert.Equal(1, await db.Items.CountAsync(item => item.Name == "Divine Orb"));
+    }
+
+    [Fact]
     public async Task Chaos_and_divine_orbs_are_seeded_once_across_every_exchange_type()
     {
         await ResetAsync();
@@ -160,13 +207,18 @@ public class PriceIngestMappingTests : IAsyncLifetime
 
     private AppDbContext CreateContext()
     {
+        var db = CreateUnmigratedContext();
+        db.Database.Migrate();
+        return db;
+    }
+
+    private AppDbContext CreateUnmigratedContext()
+    {
         var options = new DbContextOptionsBuilder<AppDbContext>()
             .UseNpgsql(_postgres.GetConnectionString())
             .Options;
 
-        var db = new AppDbContext(options);
-        db.Database.Migrate();
-        return db;
+        return new AppDbContext(options);
     }
 
     private static string FindFixture()
@@ -207,6 +259,32 @@ public class PriceIngestMappingTests : IAsyncLifetime
         {
             Calls++;
             if (_everyType || type == "Currency")
+            {
+                return Task.FromResult(_body);
+            }
+
+            return Task.FromResult("""{"lines":[],"items":[]}""");
+        }
+    }
+
+    private sealed class LaterCorePoeNinjaClient : IPoeNinjaClient
+    {
+        private readonly string _body;
+
+        public LaterCorePoeNinjaClient(string body)
+        {
+            _body = body;
+        }
+
+        public Task<string> GetExchangeOverviewAsync(string league, string type, CancellationToken cancellationToken = default)
+        {
+            if (type == "Currency")
+            {
+                return Task.FromResult(
+                    """{"core":{"rates":{"divine":0.004},"items":[]},"lines":[],"items":[]}""");
+            }
+
+            if (type == "Fragment")
             {
                 return Task.FromResult(_body);
             }

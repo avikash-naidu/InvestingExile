@@ -50,13 +50,18 @@ public sealed class PriceIngestService
         // Fetch everything before touching the database so a failed request
         // cannot leave a half-written set of snapshots.
         var rows = new List<IngestRow>();
-        var coreSeeded = false;
+        var chaosSeeded = false;
+        var divineSeeded = false;
 
         foreach (var type in ExchangeTypes)
         {
             var json = await _client.GetExchangeOverviewAsync(league, type, cancellationToken);
-            ParseExchange(type, json, rows, ref coreSeeded);
+            ParseExchange(type, json, rows, ref chaosSeeded, ref divineSeeded);
         }
+
+        // A fresh database has no tables until this runs. Fetch stays first so a
+        // failed poe.ninja call still writes no league, item, or snapshot.
+        await _db.Database.MigrateAsync(cancellationToken);
 
         await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
 
@@ -141,7 +146,12 @@ public sealed class PriceIngestService
         await _db.SaveChangesAsync(cancellationToken);
     }
 
-    private static void ParseExchange(string type, string json, List<IngestRow> rows, ref bool coreSeeded)
+    private static void ParseExchange(
+        string type,
+        string json,
+        List<IngestRow> rows,
+        ref bool chaosSeeded,
+        ref bool divineSeeded)
     {
         var overview = JsonSerializer.Deserialize<ExchangeOverview>(json, JsonOptions)
             ?? new ExchangeOverview();
@@ -158,23 +168,24 @@ public sealed class PriceIngestService
             }
         }
 
-        // Chaos Orb and Divine Orb live in core.items, not in any type's lines.
-        // Seed them once (chaos is the unit; divine is 1/rate chaos).
-        if (!coreSeeded && overview.Core is { } core)
+        // Seed each orb once, from the first core that contains that id.
+        // The category fallback is Currency, not the type being fetched. An orb
+        // with no category must not change identity when a later type supplies it.
+        if (overview.Core is { } core && (!chaosSeeded || !divineSeeded))
         {
             foreach (var coreItem in core.Items)
             {
-                if (coreItem.Id == "chaos")
+                if (coreItem.Id == "chaos" && !chaosSeeded)
                 {
-                    rows.Add(MakeRow(coreItem, type, chaosValue: 1m, divineRate, sparkline: null));
+                    rows.Add(MakeRow(coreItem, "Currency", chaosValue: 1m, divineRate, sparkline: null));
+                    chaosSeeded = true;
                 }
-                else if (coreItem.Id == "divine" && divineRate is > 0m)
+                else if (coreItem.Id == "divine" && !divineSeeded && divineRate is > 0m)
                 {
-                    rows.Add(MakeRow(coreItem, type, chaosValue: 1m / divineRate.Value, divineRate, sparkline: null));
+                    rows.Add(MakeRow(coreItem, "Currency", chaosValue: 1m / divineRate.Value, divineRate, sparkline: null));
+                    divineSeeded = true;
                 }
             }
-
-            coreSeeded = true;
         }
 
         foreach (var line in overview.Lines)
