@@ -12,12 +12,13 @@ poe.ninja migrated its economy API in 2026. The old `poe.ninja/api/data/currency
 - **Active leagues only.** The live API serves the current league. Querying an ended league returns 404 or empty. Past-league history is only available as poe.ninja's downloadable CSV data dumps (`poe.ninja/poe1/data`); importing those is a separate, later command, not the price ingest command.
 - **All exchange types.** Ingest every currency-exchange `type`. There is no types endpoint, so the list is mirrored from poe.ninja's API docs and needs a bump when a patch adds or retires a mechanic type. The PoE1 exchange types are: `Currency`, `Fragment`, `Runegraft`, `AllflameEmber`, `Tattoo`, `Omen`, `DjinnCoin`, `Ducat`, `EnshroudingCrystal`, `DivinationCard`, `Artifact`, `Oil`, `DeliriumOrb`, `Scarab`, `Astrolabe`, `Fossil`, `Resonator`, `Essence`. The exchange returns HTTP 200 with an empty `lines` for a type a league does not have, which is fine. Gear, uniques, gems, and maps are a different, individually-priced endpoint and stay out of scope.
 - Exchange response: `core`, `lines[]`, `items[]`.
-  - `core.primary` is `chaos` and `core.rates.divine` is divine-per-chaos. `core.items[]` defines Chaos Orb and Divine Orb (id `chaos`, `divine`); they are not in any type's `lines`, so seed them once: Chaos Orb chaos 1, Divine Orb chaos `1 / rates.divine`.
+  - `core.primary` is `chaos` and `core.rates.divine` is divine-per-chaos. `core.items[]` defines Chaos Orb and Divine Orb (id `chaos`, `divine`); they are not in any type's `lines`, so seed each orb once from the first core that contains that id: Chaos Orb chaos 1, Divine Orb chaos `1 / rates.divine`. An earlier core that omits those ids does not finish seeding.
   - Each `lines[]` entry has `id`, `primaryValue` (price in chaos), `volumePrimaryValue` (trade volume, not a listing count), and `sparkline`.
   - Join `line.id` to `items[]` for `name`, `detailsId`, and `category`. Use poe.ninja's `category` as the item category (for example Scarabs come back under `Fragments`, catalysts under `Catalysts`); fall back to the queried type.
 - `ChaosValue = primaryValue`. `DivineValue = primaryValue * rates.divine` (null if no rate). `ListingCount` stays null: the exchange gives volume, not a listing count; slice B decides the liquidity signal.
 - Sparkline points from the payload are what the first grid draws. Repeated hourly snapshots are the long-term series.
 - Hour bucket: truncate snapshot time to the UTC hour. Upsert the same league, item, and hour in place.
+- After every exchange type has been fetched, apply EF migrations, then write. A failed fetch still writes no league, item, or snapshot.
 - Patch notes are HTML from the official site, stored raw, parsed only against a committed fixture. Not part of the price command.
 
 ## Slice prompts
