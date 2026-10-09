@@ -56,11 +56,24 @@ public sealed class PriceIngestService
         foreach (var type in ExchangeTypes)
         {
             var json = await _client.GetExchangeOverviewAsync(league, type, cancellationToken);
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                continue;
+            }
+
             ParseExchange(type, json, rows, ref chaosSeeded, ref divineSeeded);
+        }
+
+        if (rows.Count == 0)
+        {
+            throw new ArgumentException(
+                $"League '{league}' is not valid. poe.ninja returned no prices.",
+                nameof(league));
         }
 
         // A fresh database has no tables until this runs. Fetch stays first so a
         // failed poe.ninja call still writes no league, item, or snapshot.
+        await using var writeLock = await PipelineWriteLock.AcquireAsync(_db, cancellationToken);
         await _db.Database.MigrateAsync(cancellationToken);
 
         await using var transaction = await _db.Database.BeginTransactionAsync(cancellationToken);
