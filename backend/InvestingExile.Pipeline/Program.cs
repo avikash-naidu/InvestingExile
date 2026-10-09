@@ -30,7 +30,15 @@ internal static class Program
         http.DefaultRequestHeaders.UserAgent.ParseAdd("InvestingExile/1.0");
 
         var service = new PriceIngestService(db, new PoeNinjaHttpClient(http));
-        await service.IngestAsync(league);
+        try
+        {
+            await service.IngestAsync(league);
+        }
+        catch (ArgumentException ex)
+        {
+            Console.Error.WriteLine(ex.Message);
+            return 1;
+        }
 
         Console.WriteLine($"Ingested prices for league '{league}' at the current UTC hour.");
         return 0;

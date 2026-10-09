@@ -167,6 +167,28 @@ public class PriceIngestMappingTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task An_empty_overview_writes_nothing()
+    {
+        await ResetAsync();
+        var client = new BodyPoeNinjaClient(
+            """{"core":{"items":[],"rates":{}},"lines":[],"items":[]}""",
+            everyType: true);
+
+        await using (var db = CreateContext())
+        {
+            var service = new PriceIngestService(db, client);
+            var error = await Assert.ThrowsAsync<ArgumentException>(() => service.IngestAsync(LeagueName));
+            Assert.Equal("league", error.ParamName);
+            Assert.Contains(LeagueName, error.Message);
+        }
+
+        await using var verify = CreateContext();
+        Assert.Empty(await verify.Leagues.ToListAsync());
+        Assert.Empty(await verify.Items.ToListAsync());
+        Assert.Empty(await verify.PriceSnapshots.ToListAsync());
+    }
+
+    [Fact]
     public async Task A_failed_fetch_writes_nothing()
     {
         await ResetAsync();
