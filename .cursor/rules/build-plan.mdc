@@ -36,7 +36,7 @@ Local database: docker compose, service `postgres:16`, database `investingexile`
 - **A2:** `GET /items` for the latest snapshot; Vite React grid of icon, name, chaos, divine, and sparkline.
 - **B:** `docs/SCORING.md` and that formula only; two-league fixtures assert direction and magnitude; a one-league item has no score and still renders.
 - **C:** Separate patch-note command; `PatchChange` references an item or a mechanic; `ItemMechanic` flags; shared-secret override writes `AuditLog` in the same transaction; `GET /items` applies the override and leaves `InvestmentScore` unchanged.
-- **D:** Dockerfiles for the API and the pipeline; built frontend as static files; compose runs Postgres, the API, and a one-shot pipeline; README names one small host; GitHub Actions runs tests and builds the images.
+- **D:** Dockerfiles for the API and the pipeline; built frontend as static files; compose runs Postgres, the API, and a one-shot pipeline; README names one small host; GitHub Actions builds the images. The test run is issue #70 and lands before D.
 
 ## Data rules
 

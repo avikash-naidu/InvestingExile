@@ -109,10 +109,10 @@ Host the app that already runs locally. Do not redesign it.
 
 Add Dockerfiles for the API and the pipeline. Serve the built frontend as static files. docker compose locally runs Postgres, the API, and a one-shot pipeline command. Document the exact commands in the README.
 
-Add one GitHub Actions workflow that runs tests and builds the images. Do not add a deploy workflow, Terraform, Kubernetes, Redis, or Cognito.
+Add an image-build job to the GitHub Actions workflow from issue #70. Build the API and pipeline images. Do not add a deploy workflow, Terraform, Kubernetes, Redis, or Cognito. The test run stays in #70.
 
 If you recommend a cloud host, name one small option (a single VM or one container service plus managed Postgres) and stop after the README says how to point it at that host. Do not provision cloud resources unless credentials were already given and this chat explicitly says to apply them.
 
-Done when: `docker compose up` serves the grid from the API container, and the workflow file runs tests on push.
+Done when: `docker compose up` serves the grid from the API container, and the workflow builds the API and pipeline images. Issue #70 already runs the tests on push.
 
 Close the D sub-issues that passed, then close the D parent. Update docs/STATUS.md to say the MVP host is in place and that Redis, Cognito, and EKS are not scheduled. Commit this session.

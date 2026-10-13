@@ -1,0 +1,23 @@
+name: Test
+
+on:
+  push:
+
+jobs:
+  dotnet-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out
+        uses: actions/checkout@v4
+
+      - name: Set up .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Check Docker
+        run: docker info
+
+      - name: Run tests
+        working-directory: backend
+        run: dotnet test
