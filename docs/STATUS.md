@@ -26,4 +26,4 @@ Slice A1 parent #1 is closed. Two ingest follow-ups stay open under that parent:
 
 ## Latest change
 
-2026-10-13: A push runs `dotnet test` from `backend/` so a failing test fails the workflow before slice D builds images (issue #70). Next within A2 is still issue #9, the Vite app.
+2026-10-14: The workflow test and the compose test share one walk from the test output directory up to a repo file. Next within A2 is still issue #9, the Vite app.

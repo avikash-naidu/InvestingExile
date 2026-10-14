@@ -16,20 +16,9 @@ public class DotnetTestWorkflowTests
 
     private static string FindOnlyWorkflow()
     {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-        while (directory is not null)
-        {
-            var workflows = Path.Combine(directory.FullName, ".github", "workflows");
-            if (Directory.Exists(workflows))
-            {
-                var files = Directory.GetFiles(workflows, "*.yml");
-                Assert.Single(files);
-                return files[0];
-            }
-
-            directory = directory.Parent;
-        }
-
-        throw new DirectoryNotFoundException(".github/workflows was not found above the test output directory.");
+        var workflows = RepoFiles.FindAboveTestOutput(Path.Combine(".github", "workflows"));
+        var files = Directory.GetFiles(workflows, "*.yml");
+        Assert.Single(files);
+        return files[0];
     }
 }
